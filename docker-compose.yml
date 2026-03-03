@@ -27,6 +27,23 @@ services:
       KAFKA_LOG_RETENTION_HOURS: 168
     networks:
       - data-crunch-network
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: data-crunch-kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: data-crunch
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - data-crunch-network
+
+volumes:
+  kafka_data:
+
 networks:
   data-crunch-network:
     driver: bridge
