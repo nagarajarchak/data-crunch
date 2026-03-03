@@ -16,10 +16,14 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_NUM_PARTITIONS: 3
@@ -36,8 +40,29 @@ services:
       - "8080:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: data-crunch
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - data-crunch-network
+  kafka-init:
+    image: confluentinc/cp-kafka:7.7.7
+    container_name: data-crunch-kafka-init
+    depends_on:
+      - kafka
+    entrypoint: ["/bin/sh", "-c"]
+    command: |
+      "
+      echo 'Waiting for Kafka to be ready...'
+      sleep 20
+      echo 'Creating topics...'
+      kafka-topics --create --if-not-exists --topic gps-pings --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1
+      kafka-topics --create --if-not-exists --topic ride-requests --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1
+      kafka-topics --create --if-not-exists --topic payments --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1
+      kafka-topics --create --if-not-exists --topic driver-behavior --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1
+      kafka-topics --create --if-not-exists --topic app-logs --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1
+      kafka-topics --create --if-not-exists --topic dead-letter-queue --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1
+      echo 'All topics created successfully!'
+      "
     networks:
       - data-crunch-network
 
