@@ -21,7 +21,7 @@ class DataCrunchProducer:
             key_serializer=lambda k: str(k).encode('utf-8'),
             value_serializer=lambda v: json.dumps(v).encode('utf-8')
         )
-        logger.info(f"Producer initialized for topic: {self.topic}")
+        logger.info(f"Producer initialized for kafka topic: {self.topic}")
 
     def send_message(self, key, value):
         try:
