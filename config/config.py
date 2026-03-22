@@ -7,3 +7,4 @@ class ErrorMessages(Enum):
 
 class Kafka(Enum):    
     LOCALHOST = "localhost:9092"
+    DLQ = "dead-letter-queue"
