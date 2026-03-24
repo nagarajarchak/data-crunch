@@ -6,5 +6,6 @@ class ErrorMessages(Enum):
     FAILED = "failed"
 
 class Kafka(Enum):    
-    LOCALHOST = "localhost:9092"
+    LOCALHOST = "localhost"
+    PORT = "9092"
     DLQ = "dead-letter-queue"
