@@ -2,7 +2,7 @@ import json
 import logging
 from kafka import KafkaProducer
 from kafka.errors import KafkaError
-from config.config import Kafka
+from config.kafka import General, Topics
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -10,17 +10,17 @@ log = logging.getLogger(__name__)
 class DataCrunchProducer:
     def __init__(self, topic):
         self.topic = topic
-        self.dlq_topic = Kafka.DLQ.value
+        self.dlq_topic = Topics.DLQ.value
         
         self.producer = KafkaProducer(
-            bootstrap_servers=[f"{Kafka.LOCALHOST.value}:{Kafka.PORT.value}"],
+            bootstrap_servers=[f"{General.LOCALHOST.value}:{General.PORT.value}"],
             acks=1,
             batch_size=16384,
             linger_ms=10,
-            compression_type=Kafka.COMPRESSION_SNAPPY.value,
+            compression_type=General.COMPRESSION_SNAPPY.value,
             retries=3,
-            key_serializer=lambda k: str(k).encode(Kafka.UTF8_ENCODING.value),
-            value_serializer=lambda v: json.dumps(v).encode(Kafka.UTF8_ENCODING.value)
+            key_serializer=lambda k: str(k).encode(General.UTF8_ENCODING.value),
+            value_serializer=lambda v: json.dumps(v).encode(General.UTF8_ENCODING.value)
         )
         log.info(f"Producer initialized for kafka topic: {self.topic}")
 
