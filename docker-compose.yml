@@ -65,10 +65,21 @@ services:
       "
     networks:
       - data-crunch-network
+  redis:
+    image: redis:7.2
+    container_name: data-crunch-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - data-crunch-network
+    command: redis-server --appendonly yes
 
 volumes:
   kafka_data:
-
+  redis_data:
+  
 networks:
   data-crunch-network:
     driver: bridge
