@@ -5,7 +5,7 @@ from kafka.errors import KafkaError
 from config.config import Kafka
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 class DataCrunchProducer:
     def __init__(self, topic):
@@ -17,12 +17,12 @@ class DataCrunchProducer:
             acks=1,
             batch_size=16384,
             linger_ms=10,
-            compression_type='snappy',
+            compression_type=Kafka.COMPRESSION_SNAPPY.value,
             retries=3,
-            key_serializer=lambda k: str(k).encode('utf-8'),
-            value_serializer=lambda v: json.dumps(v).encode('utf-8')
+            key_serializer=lambda k: str(k).encode(Kafka.UTF8_ENCODING.value),
+            value_serializer=lambda v: json.dumps(v).encode(Kafka.UTF8_ENCODING.value)
         )
-        logger.info(f"Producer initialized for kafka topic: {self.topic}")
+        log.info(f"Producer initialized for kafka topic: {self.topic}")
 
     def send_message(self, key, value):
         try:
@@ -33,7 +33,7 @@ class DataCrunchProducer:
             )
             future.get(timeout=10)
         except KafkaError as e:
-            logger.error(f"Failed to send message to {self.topic}: {e}")
+            log.error(f"Failed to send message to {self.topic}: {e}")
             self._send_to_dlq(key, value, str(e))
 
     def _send_to_dlq(self, key, value, error):
@@ -49,9 +49,9 @@ class DataCrunchProducer:
                 key=key,
                 value=dlq_message
             )
-            logger.warning(f"Message sent to DLQ: {error}")
+            log.warning(f"Message sent to DLQ: {error}")
         except KafkaError as e:
-            logger.error(f"Failed to send to DLQ: {e}")
+            log.error(f"Failed to send to DLQ: {e}")
 
     def flush(self):
         self.producer.flush()
@@ -59,4 +59,4 @@ class DataCrunchProducer:
     def close(self):
         self.producer.flush()
         self.producer.close()
-        logger.info(f"Producer closed for topic: {self.topic}")
+        log.info(f"Producer closed for topic: {self.topic}")
