@@ -2,6 +2,7 @@ import json
 import logging
 from kafka import KafkaProducer
 from kafka.errors import KafkaError
+from config.config import Kafka
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -9,10 +10,10 @@ logger = logging.getLogger(__name__)
 class DataCrunchProducer:
     def __init__(self, topic):
         self.topic = topic
-        self.dlq_topic = "dead-letter-queue"
+        self.dlq_topic = Kafka.DLQ.value
         
         self.producer = KafkaProducer(
-            bootstrap_servers=['localhost:9092'],
+            bootstrap_servers=[f"{Kafka.LOCALHOST.value}:{Kafka.PORT.value}"],
             acks=1,
             batch_size=16384,
             linger_ms=10,
