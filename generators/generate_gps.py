@@ -8,7 +8,6 @@ from config.kafka import Topics
 
 fake = Faker(['en_IN'])
 
-# City zones with real coordinates
 CITY_ZONES = {
     "Bangalore": {
         "Koramangala": {"lat": (12.9247, 12.9447), "lng": (77.6142, 77.6342)},
