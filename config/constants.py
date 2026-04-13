@@ -1,3 +1,8 @@
+import random
+from faker import Faker
+
+fake = Faker(['en_IN'])
+
 CITY_ZONES = {
     "Bangalore": {
         "Koramangala": {"lat": (12.9247, 12.9447), "lng": (77.6142, 77.6342)},
@@ -39,3 +44,13 @@ CITY_ZONES = {
 VEHICLE_TYPES = ["bike", "auto", "mini_cab", "sedan", "suv"]
 
 TRIP_STATUSES = ["available", "en_route_to_pickup", "on_trip", "idle", "offline"]
+
+DRIVERS = [
+    {
+        "driver_id": f"D{str(i).zfill(4)}",
+        "city": random.choice(list(CITY_ZONES.keys())),
+        "vehicle_type": random.choice(VEHICLE_TYPES),
+        "name": fake.name()
+    }
+    for i in range(1, 501)
+]
