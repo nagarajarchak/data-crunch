@@ -4,63 +4,11 @@ import uuid
 from datetime import datetime, timezone
 import redis
 from faker import Faker
+from config.constants import CITY_ZONES, DRIVERS
 
 fake = Faker(['en_IN'])
 
 USERS = [f"U{str(i).zfill(4)}" for i in range(1, 1001)]
-
-# City zones with real coordinates
-CITY_ZONES = {
-    "Bangalore": {
-        "Koramangala": {"lat": (12.9247, 12.9447), "lng": (77.6142, 77.6342)},
-        "Indiranagar": {"lat": (12.9716, 12.9916), "lng": (77.6384, 77.6584)},
-        "Whitefield": {"lat": (12.9698, 12.9898), "lng": (77.7499, 77.7699)},
-        "Electronic City": {"lat": (12.8399, 12.8599), "lng": (77.6699, 77.6899)},
-        "HSR Layout": {"lat": (12.9081, 12.9281), "lng": (77.6367, 77.6567)},
-    },
-    "Mumbai": {
-        "Bandra": {"lat": (19.0496, 19.0696), "lng": (72.8356, 72.8556)},
-        "Andheri": {"lat": (19.1136, 19.1336), "lng": (72.8467, 72.8667)},
-        "Powai": {"lat": (19.1174, 19.1374), "lng": (72.9054, 72.9254)},
-        "BKC": {"lat": (19.0596, 19.0796), "lng": (72.8656, 72.8856)},
-        "Juhu": {"lat": (19.0883, 19.1083), "lng": (72.8263, 72.8463)},
-    },
-    "Delhi": {
-        "Connaught Place": {"lat": (28.6289, 28.6489), "lng": (77.2065, 77.2265)},
-        "Gurgaon": {"lat": (28.4595, 28.4795), "lng": (77.0266, 77.0466)},
-        "Noida": {"lat": (28.5355, 28.5555), "lng": (77.3910, 77.4110)},
-        "Hauz Khas": {"lat": (28.5431, 28.5631), "lng": (77.1964, 77.2164)},
-        "Dwarka": {"lat": (28.5733, 28.5933), "lng": (77.0468, 77.0668)},
-    },
-    "Hyderabad": {
-        "Hitech City": {"lat": (17.4374, 17.4574), "lng": (78.3762, 78.3962)},
-        "Gachibowli": {"lat": (17.4401, 17.4601), "lng": (78.3489, 78.3689)},
-        "Banjara Hills": {"lat": (17.4126, 17.4326), "lng": (78.4272, 78.4472)},
-        "Jubilee Hills": {"lat": (17.4229, 17.4429), "lng": (78.4063, 78.4263)},
-        "Secunderabad": {"lat": (17.4399, 17.4599), "lng": (78.4983, 78.5183)},
-    },
-    "Chennai": {
-        "Anna Nagar": {"lat": (13.0849, 13.1049), "lng": (80.2099, 80.2299)},
-        "T Nagar": {"lat": (13.0389, 13.0589), "lng": (80.2311, 80.2511)},
-        "OMR": {"lat": (12.9010, 12.9210), "lng": (80.2279, 80.2479)},
-        "Velachery": {"lat": (12.9750, 12.9950), "lng": (80.2176, 80.2376)},
-        "Adyar": {"lat": (13.0012, 13.0212), "lng": (80.2565, 80.2765)},
-    }
-}
-
-VEHICLE_TYPES = ["bike", "auto", "mini_cab", "sedan", "suv"]
-TRIP_STATUSES = ["available", "en_route_to_pickup", "on_trip", "idle", "offline"]
-
-# Generate pool of drivers
-DRIVERS = [
-    {
-        "driver_id": f"D{str(i).zfill(4)}",
-        "city": random.choice(list(CITY_ZONES.keys())),
-        "vehicle_type": random.choice(VEHICLE_TYPES),
-        "name": fake.name()
-    }
-    for i in range(1, 501)
-]
 
 class TripStateManager:
     def __init__(self):
