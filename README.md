@@ -1,3 +1,3 @@
 # data-crunch
 
-A data pipelining self project.
+A data pipelining self project
