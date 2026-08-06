@@ -2,7 +2,6 @@ import uuid
 import random
 import time
 from datetime import datetime, timezone, timedelta
-from faker import Faker
 from generators.kafka_producer import DataCrunchProducer
 from config.kafka import Topics
 from config.constants import CITY_ZONES, TRIP_STATUSES, DRIVERS, fake
